@@ -1,0 +1,124 @@
+
+    l_url = "http://control.edu.gov.ru/api/get.php?auth=cvyhiux6dlndy8&status=in_progress"
+
+    l_response = requests.request("GET", l_url, data="", headers="")
+
+    #print(json.dumps(l_response.json(), sort_keys=True, indent=4))
+
+    cursor = connection.cursor()
+
+    data = []
+
+
+
+    for line in l_response.json():
+
+        data.append(json.loads(json.dumps(line)))
+
+
+
+    fields = [
+
+            'ID',
+
+            'TITLE',
+
+            'DEADLINE',
+
+            'CLOSED_DATE',
+
+            'RESPONSIBLE_ID',
+
+            'RESPONSIBLE_LAST_NAME',
+
+            'RESPONSIBLE_NAME',
+
+            'RESPONSIBLE_SECOND_NAME',
+
+            'FULL_NAME'
+
+    ]
+
+
+
+    cursor.execute("truncate table edu_gov_in_progress")
+
+    for item in data:
+
+        my_data = [item[field] for field in fields]
+
+        insert_query = "INSERT INTO edu_gov_in_progress (ID,TITLE,DEADLINE,CLOSED_DATE,RESPONSIBLE_ID,RESPONSIBLE_LAST_NAME,RESPONSIBLE_NAME,RESPONSIBLE_SECOND_NAME,FULL_NAME,status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,'В работе')"
+
+        cursor.execute(insert_query, tuple(my_data))
+
+
+
+    cursor.execute("Commit")
+
+
+
+    l_url = "http://control.edu.gov.ru/api/get.php?auth=cvyhiux6dlndy8&status=done"
+
+    l_response = requests.request("GET", l_url, data="", headers="")
+
+    #print(json.dumps(l_response.json(), sort_keys=True, indent=4))
+
+    cursor = connection.cursor()
+
+    data = []
+
+
+
+    for line in l_response.json():
+
+        data.append(json.loads(json.dumps(line)))
+
+
+
+    cursor.execute("truncate table edu_gov_done")
+
+    for item in data:
+
+        my_data = [item[field] for field in fields]
+
+        insert_query = "INSERT INTO edu_gov_done (ID,TITLE,DEADLINE,CLOSED_DATE,RESPONSIBLE_ID,RESPONSIBLE_LAST_NAME,RESPONSIBLE_NAME,RESPONSIBLE_SECOND_NAME,FULL_NAME,status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,'Исполнено')"
+
+        cursor.execute(insert_query, tuple(my_data))
+
+
+
+    cursor.execute("Commit")
+
+
+
+    l_url = "http://control.edu.gov.ru/api/get.php?auth=cvyhiux6dlndy8&status=expired"
+
+    l_response = requests.request("GET", l_url, data="", headers="")
+
+    #print(json.dumps(l_response.json(), sort_keys=True, indent=4))
+
+    cursor = connection.cursor()
+
+    data = []
+
+
+
+    for line in l_response.json():
+
+        data.append(json.loads(json.dumps(line)))
+
+
+
+    cursor.execute("truncate table edu_gov_expired")
+
+    for item in data:
+
+        my_data = [item[field] for field in fields]
+
+        insert_query = "INSERT INTO edu_gov_expired (ID,TITLE,DEADLINE,CLOSED_DATE,RESPONSIBLE_ID,RESPONSIBLE_LAST_NAME,RESPONSIBLE_NAME,RESPONSIBLE_SECOND_NAME,FULL_NAME,status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,'Просрочено')"
+
+        cursor.execute(insert_query, tuple(my_data))
+
+
+
+    cursor.execute("Commit")
